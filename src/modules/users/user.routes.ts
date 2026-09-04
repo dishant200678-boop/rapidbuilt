@@ -1,0 +1,15 @@
+import { Router } from 'express';
+import { UserController } from './user.controller.js';
+import { requireAuth } from '../../middleware/requireAuth.js';
+import { roleGuard } from '../../middleware/roleGuard.js';
+
+const router = Router();
+
+router.use(requireAuth);
+
+router.get('/me', UserController.getMe);
+router.get('/me/export', UserController.exportMe);
+router.delete('/me', UserController.deleteMe);
+router.get('/', roleGuard(['superadmin', 'ministry_admin']), UserController.listUsers);
+
+export default router;
