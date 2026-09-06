@@ -1,36 +1,31 @@
 # netlify.toml — PRAGATI Backend Serverless Configuration
-# ─────────────────────────────────────────────────────────────────────────────
 
 [build]
-  # TypeScript type-check only; esbuild (below) handles the actual bundle
+  # TypeScript type-check only; esbuild handles the actual bundle
   command = "npm run build:netlify"
 
-  # This is an API-only backend — no static publish directory
+  # API-only backend — placeholder static publish directory
   publish = "public"
 
   # Netlify Functions directory
   functions = "netlify/functions"
 
-# ── Function runtime settings ─────────────────────────────────────────────────
+[build.environment]
+  NODE_VERSION = "20"
+
+# Function runtime settings
 [functions]
   # esbuild automatically handles TypeScript, ESM, and tree-shaking
   node_bundler = "esbuild"
 
-  # Node.js version — must match your MongoDB driver's requirements
-  node_version = "20"
-
-  # Packages that must NOT be bundled (native addons / large modules)
-  # esbuild will mark these as external and expect them in node_modules
+  # Packages that must NOT be bundled (native addons / external modules)
+  # esbuild marks these as external and keeps them in node_modules
   external_node_modules = ["mongoose", "bcryptjs", "nodemailer"]
 
-  # Allow the function up to 26 seconds (Netlify max is 26s on free tier)
-  # Increase if PAiMANA or Gemini calls are slow
+  # Files bundled with the function
   included_files = ["src/**"]
 
-# ── Redirects: /api/* → Netlify Function ─────────────────────────────────────
-# All API requests are transparently proxied to the Express function.
-# The :splat captures everything after /api/ and appends it to the function URL.
-
+# Redirects: /api/* -> Netlify Function
 [[redirects]]
   from   = "/api/*"
   to     = "/.netlify/functions/api/:splat"
@@ -43,7 +38,7 @@
   status = 200
   force  = true
 
-# ── CORS headers (belt-and-suspenders alongside Express CORS middleware) ──────
+# CORS headers
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
