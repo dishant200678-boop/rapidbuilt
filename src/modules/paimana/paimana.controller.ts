@@ -65,7 +65,7 @@ export class PaimanaController {
 
   /**
    * GET /api/paimana/compare/:projectId
-   * Compare RapidBuilt project data with official MoSPI PAiMANA portal records
+   * Compare PRAGATI project data with official MoSPI PAiMANA portal records
    */
   static async compareProject(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -82,7 +82,7 @@ export class PaimanaController {
 
   /**
    * POST /api/paimana/sync/:projectId
-   * Synchronize RapidBuilt project with PAiMANA official data & re-evaluate AI risk metrics
+   * Synchronize PRAGATI project with PAiMANA official data & re-evaluate AI risk metrics
    */
   static async syncProject(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -183,6 +183,40 @@ export class PaimanaController {
       res.status(201).json({
         success: true,
         message: `Successfully ingested ${result.ingestedCount} project records into MoSPI reference corpus`,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/paimana/verify-live
+   * Executes a real live data fetch against official MoSPI public endpoints
+   */
+  static async verifyPublicAccess(_req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const liveCheck = await PaimanaService.verifyPublicPaimanaAccess();
+      res.status(200).json({
+        success: true,
+        data: liveCheck,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/paimana/ingest-csv
+   * Ingest project datasets from raw CSV text (e.g. exported MoSPI Flash Reports)
+   */
+  static async ingestCsv(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const csvContent = typeof req.body === 'string' ? req.body : req.body.csv || req.body.content;
+      const result = PaimanaService.ingestMoSPICsv(csvContent);
+      res.status(201).json({
+        success: true,
+        message: `Successfully parsed and ingested ${result.ingestedCount} projects from CSV`,
         data: result,
       });
     } catch (error) {

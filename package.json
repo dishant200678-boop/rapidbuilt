@@ -2,7 +2,7 @@
   "name": "rapidbuilt-backend",
   "version": "1.0.0",
   "type": "module",
-  "description": "RapidBuilt - AI-Powered National Project Monitoring & Early Warning Platform Backend",
+  "description": "PRAGATI - Project Risk Assessment & Government Activity Tracking Interface — AI-Powered National Infrastructure Project Monitoring & Early Warning Platform",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

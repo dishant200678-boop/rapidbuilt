@@ -23,10 +23,18 @@ const envSchema = z.object({
   SMTP_PASS: z.string().optional(),
   EMAIL_FROM: z.string().optional().default('noreply@rapidbuilt.gov.in'),
   SENTRY_DSN: z.string().optional(),
+  PAIMANA_PORTAL_URL: z.string().optional().default('https://paimana-proj.mospi.gov.in'),
   PAIMANA_BASE_URL: z.string().optional(),
   PAIMANA_API_KEY: z.string().optional(),
-  PAIMANA_TIMEOUT_MS: z.string().optional().transform((val) => (val ? Number(val) : 10000)),
+  PAIMANA_TIMEOUT_MS: z.string().optional().transform((val) => (val ? Number(val) : 15000)),
   PAIMANA_MOCK_ENABLED: z.string().optional().transform((val) => val !== 'false'),
+
+  // AI Assistant provider config (server-side only — never sent to the frontend)
+  AI_PROVIDER: z.enum(['openai', 'groq', 'gemini']).optional().default('openai'),
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().optional().default('gpt-4o-mini'),
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().optional().default('gemini-2.0-flash'),
 });
 
 const parsed = envSchema.safeParse(process.env);

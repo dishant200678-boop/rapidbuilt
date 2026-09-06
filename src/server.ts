@@ -17,6 +17,7 @@ import projectRoutes from './modules/projects/project.routes.js';
 import analyticsRoutes from './modules/analytics/analytics.routes.js';
 import mapsRoutes from './modules/maps/maps.routes.js';
 import paimanaRoutes from './modules/paimana/paimana.routes.js';
+import aiRoutes from './modules/ai/ai.routes.js';
 
 const app = express();
 
@@ -43,7 +44,7 @@ app.use(morgan('dev'));
 app.get('/health', (_req, res) => {
   res.status(200).json({
     success: true,
-    message: 'RapidBuilt backend is running',
+    message: 'PRAGATI — Project Risk Assessment & Government Activity Tracking Interface',
     environment: env.NODE_ENV,
   });
 });
@@ -55,6 +56,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/maps', mapsRoutes);
 app.use('/api/paimana', paimanaRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error handler must be last
 app.use(errorHandler);
@@ -85,7 +87,7 @@ async function startServer(): Promise<void> {
     await connectDB();
 
     httpServer.listen(env.PORT, () => {
-      logger.info(`RapidBuilt backend running on port ${env.PORT}`);
+      logger.info(`PRAGATI backend running on port ${env.PORT}`);
       logger.info(`Environment: ${env.NODE_ENV}`);
     });
   } catch (error) {
