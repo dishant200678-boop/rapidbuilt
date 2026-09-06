@@ -35,6 +35,10 @@ export interface IProject extends Document {
   scheduledProgressPct: number;
   status: ProjectStatus;
 
+  // Geospatial / Map coordinates
+  latitude?: number;
+  longitude?: number;
+
   // Extended / Additional Risk Variables
   contractorName?: string;
   contractorPerformanceScore?: number; // 0 - 100
@@ -109,6 +113,10 @@ const projectSchema = new Schema<IProject>(
       default: 'Active',
       index: true,
     },
+
+    // Geospatial coordinates
+    latitude: { type: Number, min: -90, max: 90 },
+    longitude: { type: Number, min: -180, max: 180 },
 
     // Extended Variables
     contractorName: { type: String, trim: true },

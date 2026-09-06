@@ -23,6 +23,7 @@ export class ProjectService {
       ...data,
       projectCode: data.projectCode.toUpperCase(),
       revisedCost: data.revisedCost || data.originalCost,
+      revisedCompletionDate: data.revisedCompletionDate || data.scheduledCompletionDate,
       ...riskMetrics,
       createdBy: new Types.ObjectId(user.userId),
     });

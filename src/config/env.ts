@@ -23,6 +23,10 @@ const envSchema = z.object({
   SMTP_PASS: z.string().optional(),
   EMAIL_FROM: z.string().optional().default('noreply@rapidbuilt.gov.in'),
   SENTRY_DSN: z.string().optional(),
+  PAIMANA_BASE_URL: z.string().optional(),
+  PAIMANA_API_KEY: z.string().optional(),
+  PAIMANA_TIMEOUT_MS: z.string().optional().transform((val) => (val ? Number(val) : 10000)),
+  PAIMANA_MOCK_ENABLED: z.string().optional().transform((val) => val !== 'false'),
 });
 
 const parsed = envSchema.safeParse(process.env);
