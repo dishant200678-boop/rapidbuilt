@@ -84,7 +84,7 @@ export async function handleAiAssistant(
  * Never exposes the actual API key value.
  */
 export async function handleAiDiagnose(
-  req: Request,
+  _req: Request,
   res: Response
 ): Promise<void> {
   const provider = env.AI_PROVIDER ?? 'openai';

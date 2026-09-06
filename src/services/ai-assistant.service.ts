@@ -17,7 +17,7 @@
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 import { ProjectService } from '../modules/projects/project.service.js';
-import { AnalyticsService } from '../modules/analytics/analytics.service.js';
+// AnalyticsService reserved for future dashboard context expansion
 import { PaimanaService } from './paimana.service.js';
 import { Alert } from '../modules/alerts/alert.model.js';
 
@@ -188,20 +188,18 @@ async function buildProjectContext(projectId: string): Promise<{
       const comparison = await PaimanaService.compareWithRapidBuilt(projectId);
       if (comparison) {
         paimanaUsed = true;
-        const isLive = !comparison.paimanaProject?.isSimulated;
         lines.push('');
-        lines.push(`--- PAiMANA DATA (${isLive ? 'LIVE/OFFICIAL' : 'SIMULATED/DEMO'}) ---`);
-        if (comparison.paimanaProject) {
-          const p = comparison.paimanaProject;
-          lines.push(`PAiMANA Project Code: ${p.projectCode ?? 'N/A'}`);
-          lines.push(`PAiMANA Approved Cost: ₹${p.approvedCostCr ?? 'N/A'} Cr`);
-          lines.push(`PAiMANA Latest Cost: ₹${p.latestCostCr ?? 'N/A'} Cr`);
-          lines.push(`PAiMANA Physical Progress: ${p.physicalProgressPct ?? 'N/A'}%`);
-          lines.push(`PAiMANA Status: ${p.status ?? 'N/A'}`);
-        }
-        if (comparison.discrepancies && comparison.discrepancies.length > 0) {
-          lines.push('Discrepancies with PRAGATI data:');
-          comparison.discrepancies.forEach((d: string) => lines.push(`  • ${d}`));
+        lines.push(`--- PAiMANA DATA ---`);
+        lines.push(`PAiMANA Project ID: ${comparison.paimanaProjectId ?? 'N/A'}`);
+        lines.push(`Project Code: ${comparison.projectCode ?? 'N/A'}`);
+        lines.push(`Divergence Score: ${comparison.divergenceScore}/100`);
+        lines.push(`Discrepancies Found: ${comparison.discrepanciesFound ? 'Yes' : 'No'}`);
+        lines.push(`Summary: ${comparison.summary}`);
+        if (comparison.comparisons && comparison.comparisons.length > 0) {
+          lines.push('Field Comparisons:');
+          comparison.comparisons.slice(0, 5).forEach((c) =>
+            lines.push(`  • ${c.field}: PRAGATI=${c.rapidbuiltValue ?? 'N/A'}, PAiMANA=${c.paimanaValue ?? 'N/A'}`)
+          );
         }
       }
     } catch {
@@ -308,7 +306,7 @@ export class AiAssistantService {
    * conversationHistory enables multi-turn conversation memory within a session.
    */
   static async answer(req: AssistantRequest): Promise<AssistantResponse> {
-    const { prompt, projectId, conversationHistory = [], userId } = req;
+    const { prompt, projectId, conversationHistory = [] } = req;
 
     let projectContextUsed = false;
     let paimanaContextUsed = false;
